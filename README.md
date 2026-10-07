@@ -23,7 +23,7 @@ The main contributions of this paper are as follows:
 1. [Data Pipeline](#data-pipeline)
    - [Step 1 — Alignment](#step-1--alignment)
    - [Step 2 — MMS Forced Alignment](#step-2--mms-forced-alignment)
-   - [Step 3 — Enrich TSVs with Audio Units](#step-3--enrich-tsvs-with-audio-units)
+   - [Step 3 — TSV with Audio Units](#step-3--tsvs-with-audio-units)
    - [Step 4 — Merge Across Episodes](#step-4--merge-across-episodes)
    - [Step 5 — Build Train/Valid/Test Manifests](#step-5--build-trainvalidtest-manifests)
 2. [Training (LTKD / S2UT)](#training-ltkd--s2ut)
@@ -82,7 +82,7 @@ python force_aligned_over_folders_parallel.py \
 
 ---
 
-### Step 3 — Enrich TSVs with Audio Units
+### Step 3 — TSVs with Audio Units
 
 Enrich each of the four per-episode TSVs with audio path + discrete units (in-place, joined on `sentence_id` against `manifest.json`):
 
