@@ -155,35 +155,50 @@ Point your fairseq training config at the JSON manifests produced by the pipelin
 
 ## Pretrained Checkpoints
 
-The dataset ([latentvector/BharatVaani](https://huggingface.co/datasets/latentvector/BharatVaani)) and the fine-tuned checkpoint ([latentvector/BharatVaani-s2ut](https://huggingface.co/latentvector/BharatVaani-s2ut)) are hosted separately on the Hugging Face Hub.
+The dataset ([latentvector/BharatVaani](https://huggingface.co/datasets/latentvector/BharatVaani)) and the fine-tuned checkpoints ([latentvector/BharatVaani-s2ut](https://huggingface.co/latentvector/BharatVaani-s2ut)) are hosted separately on the Hugging Face Hub.
 
-We release a **multilingual S2UT checkpoint** trained on the BharatVaani (Maan Ki Baat) data, covering 34 Indic → English language directions.
+We release **two multilingual S2UT checkpoints**, both covering 34 Indic → English language directions, trained on different data:
 
-### Downloading the checkpoint
+| Checkpoint | Training Data | Filename |
+|---|---|---|
+| BharatVaani | BharatVaani (Maan Ki Baat) | `s2st_multilingual_bv.pt` |
+| Bhashaanuvaad | Bhashaanuvaad ([AI4Bharat](https://ai4bharat.iitm.ac.in/)) | `s2st_multilingual_ba.pt` |
+
+### Downloading the checkpoints
 
 ```python
 from huggingface_hub import hf_hub_download
 
-ckpt_path = hf_hub_download(
+# BharatVaani-trained checkpoint
+bv_ckpt = hf_hub_download(
     repo_id="latentvector/BharatVaani-s2ut",
-    filename="checkpoint.pt",
+    filename="s2st_multilingual_bv.pt",
+)
+
+# Bhashaanuvaad-trained checkpoint
+ba_ckpt = hf_hub_download(
+    repo_id="latentvector/BharatVaani-s2ut",
+    filename="s2st_multilingual_ba.pt",
 )
 ```
 
 Or via the CLI:
 
 ```bash
-huggingface-cli download latentvector/BharatVaani-s2ut checkpoint.pt \
+huggingface-cli download latentvector/BharatVaani-s2ut s2st_multilingual_bv.pt \
+    --local-dir /path/to/checkpoints
+
+huggingface-cli download latentvector/BharatVaani-s2ut s2st_multilingual_ba.pt \
     --local-dir /path/to/checkpoints
 ```
 
-### Using the checkpoint for inference / fine-tuning
+### Using a checkpoint for inference / fine-tuning
 
 Pass the downloaded path as the `--path` argument to fairseq:
 
 ```bash
 fairseq-generate /path/to/lang_pair_combinations \
-    --path /path/to/checkpoints/checkpoint.pt \
+    --path /path/to/checkpoints/s2st_multilingual_bv.pt \
     --task speech_to_speech \
     ...
 ```
@@ -191,29 +206,22 @@ fairseq-generate /path/to/lang_pair_combinations \
 Or reference it in a SeamlessM4T/seamless_communication inference script:
 
 ```python
-model = load_model("/path/to/checkpoints/checkpoint.pt")
+model = load_model("/path/to/checkpoints/s2st_multilingual_bv.pt")
 ```
 
-### Uploading the checkpoint (maintainers)
-
-```python
-from huggingface_hub import HfApi
-
-api = HfApi()
-api.upload_file(
-    path_or_fileobj="/local/path/to/checkpoint.pt",
-    path_in_repo="checkpoint.pt",
-    repo_id="latentvector/BharatVaani-s2ut",
-    repo_type="model",
-)
-```
-
-Or via the CLI (recommended for large files — uses chunked upload automatically):
+### Uploading the checkpoints (maintainers)
 
 ```bash
+# BharatVaani checkpoint
 huggingface-cli upload latentvector/BharatVaani-s2ut \
-    /local/path/to/checkpoint.pt \
-    checkpoint.pt \
+    /DATA/nfsshare/Adarsh/Multilingual/New/Final_jsons/All_aligned_threshold_h055_l045/Checkpoints_new1/checkpoint_SPEECH_TO_SPEECH_loss_21.2747_lr_2.98E-08_infer.pt \
+    s2st_multilingual_bv.pt \
+    --repo-type model
+
+# Bhashaanuvaad checkpoint
+huggingface-cli upload latentvector/BharatVaani-s2ut \
+    /DATA/nfsshare/Adarsh/SLAM/Multilingual_folders/bhasaanuvad/Seamless__Merged_JSON/deduplicated_json/Checkpoints_new1/checkpoint_SPEECH_TO_SPEECH_loss_21.5674_lr_7.07E-08_infer.pt \
+    s2st_multilingual_ba.pt \
     --repo-type model
 ```
 
